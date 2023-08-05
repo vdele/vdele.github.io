@@ -2,10 +2,12 @@
 <html>
 <head>
     <title>Tirage de boules</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
+            margin: 20px;
         }
 
         h1 {
@@ -58,6 +60,7 @@
     <h1>Tirage de boules</h1>
     <label for="numBoules">Nombre de boules dans l'urne :</label>
     <input type="number" id="numBoules" min="1" max="100" step="1" value="50">
+    <br>
     <button onclick="effectuerTirage()">Tirer 5 boules</button>
     <p>Résultat du tirage :</p>
     <ul id="resultatTirage">
