@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tirage de boules</title>
+</head>
+<body>
+    <h1>Tirage de boules</h1>
+    <label for="numBoules">Nombre de boules dans l'urne :</label>
+    <input type="number" id="numBoules" min="1" max="100" step="1" value="50">
+    <button onclick="effectuerTirage()">Tirer 5 boules</button>
+    <p>Résultat du tirage :</p>
+    <ul id="resultatTirage">
+    </ul>
+
+    <script>
+        function effectuerTirage() {
+            const numBoules = parseInt(document.getElementById('numBoules').value);
+            let boules = [];
+            for (let i = 1; i <= numBoules; i++) {
+                boules.push(i);
+            }
+
+            let resultat = [];
+            for (let i = 0; i < 5; i++) {
+                const indexTire = Math.floor(Math.random() * boules.length);
+                const bouleTiree = boules.splice(indexTire, 1)[0];
+                resultat.push(bouleTiree);
+            }
+
+            const resultatTirage = document.getElementById('resultatTirage');
+            resultatTirage.innerHTML = '';
+            resultat.forEach(num => {
+                const li = document.createElement('li');
+                li.textContent = num;
+                resultatTirage.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>
