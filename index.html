@@ -57,14 +57,34 @@
             padding: 8px;
             border-radius: 5px;
         }
+        .input-group {
+            display: flex;
+            justify-content: center;
+            align-items: center; 
+            margin-bottom: 10px;
+        }
+
+        .input-group label {
+            margin-right: 10px;
+        }
+        .input-group input {
+            max-width: 40px;
+        }
     </style>
 </head>
 <body>
     <h1>Tirage de boules</h1>
-    <label for="numBoules">Nombre de boules dans l'urne :</label>
-    <input type="number" id="numBoules" min="1" max="100" step="1" value="50">
-    <br>
-    <button onclick="effectuerTirage()">Tirer 5 boules</button>
+    <div class="input-group">
+        <label for="numBoules">Nombre de boules dans l'urne </label>
+        <input type="number" id="numBoules" min="1" max="100" step="1" value="50">
+    </div>
+    <div class="input-group">
+        <label for="numTires">Nombre de boules à tirer </label>
+        <input type="number" id="numTires" min="1" max="10" step="1" value="5">
+    </div>
+    <div>
+        <button onclick="effectuerTirage()">Tirer les boules</button>
+    </div>
     <p>Résultat du tirage :</p>
     <ul id="resultatTirage">
     </ul>
@@ -72,13 +92,14 @@
     <script>
         function effectuerTirage() {
             const numBoules = parseInt(document.getElementById('numBoules').value);
+            const numTires = parseInt(document.getElementById('numTires').value); // Nouvelle ligne
             let boules = [];
             for (let i = 1; i <= numBoules; i++) {
                 boules.push(i);
             }
 
             let resultat = [];
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < numTires; i++) { // Utilisation de numTires
                 const indexTire = Math.floor(Math.random() * boules.length);
                 const bouleTiree = boules.splice(indexTire, 1)[0];
                 resultat.push(bouleTiree);
@@ -93,7 +114,10 @@
             });
         }
 
-        effectuerTirage();
+        // Tirage automatique au chargement de la page
+        window.addEventListener('load', function() {
+            effectuerTirage();
+        });
     </script>
 </body>
 </html>
