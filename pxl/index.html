@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Éditeur Pixel Art</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .editor-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tools-panel {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            min-width: 250px;
+        }
+
+        .tool-section {
+            margin-bottom: 20px;
+        }
+
+        .tool-section h3 {
+            margin-bottom: 10px;
+            color: #2d3748;
+            font-size: 1.2em;
+        }
+
+        .tool-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .tool-btn {
+            padding: 10px 15px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .tool-btn:hover {
+            background: #edf2f7;
+            transform: translateY(-2px);
+        }
+
+        .tool-btn.active {
+            background: #4299e1;
+            color: white;
+            border-color: #3182ce;
+            box-shadow: 0 4px 10px rgba(66, 153, 225, 0.3);
+        }
+
+        .color-palette {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .color-btn {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .color-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .color-btn.active {
+            border-color: #2d3748;
+            transform: scale(1.15);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+        }
+
+        .current-color {
+            width: 60px;
+            height: 60px;
+            border: 3px solid #2d3748;
+            border-radius: 10px;
+            margin: 0 auto;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .canvas-container {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #pixelCanvas {
+            border: 3px solid #4a5568;
+            border-radius: 8px;
+            cursor: crosshair;
+            background: white;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            image-rendering: pixelated;
+        }
+
+        .canvas-controls {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .clear-btn {
+            padding: 10px 20px;
+            background: #e53e3e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .clear-btn:hover {
+            background: #c53030;
+            transform: translateY(-2px);
+        }
+
+        .grid-size {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .grid-size input {
+            width: 60px;
+            padding: 5px;
+            border: 2px solid #e2e8f0;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .editor-container {
+                flex-direction: column;
+            }
+            
+            .tools-panel {
+                min-width: auto;
+            }
+            
+            .color-palette {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Éditeur Pixel Art</h1>
+        
+        <div class="editor-container">
+            <div class="tools-panel">
+                <div class="tool-section">
+                    <h3>🔧 Outils</h3>
+                    <div class="tool-buttons">
+                        <button class="tool-btn active" data-tool="pixel">Pixel</button>
+                        <button class="tool-btn" data-tool="line">Ligne</button>
+                        <button class="tool-btn" data-tool="circle">Cercle</button>
+                        <button class="tool-btn" data-tool="eraser">Gomme</button>
+                    </div>
+                </div>
+                
+                <div class="tool-section">
+                    <h3>🎨 Couleurs</h3>
+                    <div class="color-palette" id="colorPalette"></div>
+                    <div class="current-color" id="currentColor"></div>
+                </div>
+            </div>
+            
+            <div class="canvas-container">
+                <canvas id="pixelCanvas" width="480" height="480"></canvas>
+                <div class="canvas-controls">
+                    <button class="clear-btn" onclick="clearCanvas()">Effacer tout</button>
+                    <div class="grid-size">
+                        <label>Taille grille:</label>
+                        <input type="number" id="gridSize" value="20" min="10" max="50" onchange="changeGridSize()">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const canvas = document.getElementById('pixelCanvas');
+        const ctx = canvas.getContext('2d');
+        let gridSize = 20;
+        let cellSize = canvas.width / gridSize;
+        let currentTool = 'pixel';
+        let currentColor = '#000000';
+        let isDrawing = false;
+        let startX, startY;
+        let grid = [];
+
+        // Palette de couleurs
+        const colors = [
+            '#000000', '#FFFFFF', '#FF0000', '#00FF00',
+            '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF',
+            '#800000', '#008000', '#000080', '#808000',
+            '#800080', '#008080', '#FFA500', '#FFC0CB',
+            '#A52A2A', '#808080', '#90EE90', '#87CEEB'
+        ];
+
+        // Initialisation
+        function init() {
+            createColorPalette();
+            initGrid();
+            drawGrid();
+            setupEventListeners();
+            updateCurrentColor();
+        }
+
+        // Créer la palette de couleurs
+        function createColorPalette() {
+            const palette = document.getElementById('colorPalette');
+            colors.forEach((color, index) => {
+                const colorBtn = document.createElement('div');
+                colorBtn.className = 'color-btn';
+                if (index === 0) colorBtn.classList.add('active');
+                colorBtn.style.backgroundColor = color;
+                colorBtn.addEventListener('click', () => selectColor(color, colorBtn));
+                palette.appendChild(colorBtn);
+            });
+        }
+
+        // Sélectionner une couleur
+        function selectColor(color, btn) {
+            currentColor = color;
+            document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updateCurrentColor();
+        }
+
+        // Mettre à jour la couleur courante
+        function updateCurrentColor() {
+            document.getElementById('currentColor').style.backgroundColor = currentColor;
+        }
+
+        // Initialiser la grille
+        function initGrid() {
+            grid = [];
+            for (let i = 0; i < gridSize; i++) {
+                grid[i] = [];
+                for (let j = 0; j < gridSize; j++) {
+                    grid[i][j] = '#FFFFFF';
+                }
+            }
+        }
+
+        // Dessiner la grille
+        function drawGrid() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Dessiner les cellules
+            for (let i = 0; i < gridSize; i++) {
+                for (let j = 0; j < gridSize; j++) {
+                    ctx.fillStyle = grid[i][j];
+                    ctx.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
+                }
+            }
+            
+            // Dessiner les lignes de la grille
+            ctx.strokeStyle = '#E0E0E0';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= gridSize; i++) {
+                ctx.beginPath();
+                ctx.moveTo(i * cellSize, 0);
+                ctx.lineTo(i * cellSize, canvas.height);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(0, i * cellSize);
+                ctx.lineTo(canvas.width, i * cellSize);
+                ctx.stroke();
+            }
+        }
+
+        // Configuration des événements
+        function setupEventListeners() {
+            // Sélection des outils
+            document.querySelectorAll('.tool-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentTool = btn.dataset.tool;
+                });
+            });
+
+            // Événements de dessin
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseleave', stopDrawing);
+        }
+
+        // Obtenir les coordonnées de la grille
+        function getGridCoords(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            return {
+                gridX: Math.floor(x / cellSize),
+                gridY: Math.floor(y / cellSize)
+            };
+        }
+
+        // Commencer à dessiner
+        function startDrawing(e) {
+            isDrawing = true;
+            const coords = getGridCoords(e);
+            startX = coords.gridX;
+            startY = coords.gridY;
+            
+            if (currentTool === 'pixel' || currentTool === 'eraser') {
+                drawPixel(coords.gridX, coords.gridY);
+            }
+        }
+
+        // Dessiner
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            const coords = getGridCoords(e);
+            
+            if (currentTool === 'pixel' || currentTool === 'eraser') {
+                drawPixel(coords.gridX, coords.gridY);
+            }
+        }
+
+        // Arrêter de dessiner
+        function stopDrawing(e) {
+            if (!isDrawing) return;
+            isDrawing = false;
+            
+            const coords = getGridCoords(e);
+            
+            if (currentTool === 'line') {
+                drawLine(startX, startY, coords.gridX, coords.gridY);
+            } else if (currentTool === 'circle') {
+                drawCircle(startX, startY, coords.gridX, coords.gridY);
+            }
+            
+            drawGrid();
+        }
+
+        // Dessiner un pixel
+        function drawPixel(x, y) {
+            if (x >= 0 && x < gridSize && y >= 0 && y < gridSize) {
+                const color = currentTool === 'eraser' ? '#FFFFFF' : currentColor;
+                grid[y][x] = color;
+                
+                ctx.fillStyle = color;
+                ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+            }
+        }
+
+        // Dessiner une ligne (algorithme de Bresenham)
+        function drawLine(x0, y0, x1, y1) {
+            const dx = Math.abs(x1 - x0);
+            const dy = Math.abs(y1 - y0);
+            const sx = x0 < x1 ? 1 : -1;
+            const sy = y0 < y1 ? 1 : -1;
+            let err = dx - dy;
+            
+            let x = x0;
+            let y = y0;
+            
+            while (true) {
+                if (x >= 0 && x < gridSize && y >= 0 && y < gridSize) {
+                    const color = currentTool === 'eraser' ? '#FFFFFF' : currentColor;
+                    grid[y][x] = color;
+                }
+                
+                if (x === x1 && y === y1) break;
+                
+                const e2 = 2 * err;
+                if (e2 > -dy) {
+                    err -= dy;
+                    x += sx;
+                }
+                if (e2 < dx) {
+                    err += dx;
+                    y += sy;
+                }
+            }
+        }
+
+        // Dessiner un cercle
+        function drawCircle(centerX, centerY, edgeX, edgeY) {
+            const radius = Math.round(Math.sqrt(Math.pow(edgeX - centerX, 2) + Math.pow(edgeY - centerY, 2)));
+            
+            for (let angle = 0; angle < 360; angle += 1) {
+                const x = Math.round(centerX + radius * Math.cos(angle * Math.PI / 180));
+                const y = Math.round(centerY + radius * Math.sin(angle * Math.PI / 180));
+                
+                if (x >= 0 && x < gridSize && y >= 0 && y < gridSize) {
+                    const color = currentTool === 'eraser' ? '#FFFFFF' : currentColor;
+                    grid[y][x] = color;
+                }
+            }
+        }
+
+        // Effacer le canvas
+        function clearCanvas() {
+            initGrid();
+            drawGrid();
+        }
+
+        // Changer la taille de la grille
+        function changeGridSize() {
+            const newSize = parseInt(document.getElementById('gridSize').value);
+            if (newSize >= 10 && newSize <= 50) {
+                gridSize = newSize;
+                cellSize = canvas.width / gridSize;
+                initGrid();
+                drawGrid();
+            }
+        }
+
+        // Initialisation au chargement
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
