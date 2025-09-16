@@ -292,11 +292,30 @@
 
         // Couleurs disponibles
         const colors = [
-            '#000000', '#FFFFFF', '#FF0000', '#00FF00',
-            '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF',
-            '#800000', '#008000', '#000080', '#808000',
-            '#800080', '#008080', '#FFA500', '#FFC0CB',
-            '#A52A2A', '#808080', '#90EE90', '#87CEEB'
+            { hex: '#000000', name: 'Noir' },
+            { hex: '#FFFFFF', name: 'Blanc' },
+            { hex: '#A9A9A9', name: 'Gris foncé' },
+            { hex: '#808080', name: 'Gris' },
+            { hex: '#FF0000', name: 'Rouge' },
+            { hex: '#00FF00', name: 'Vert' },
+            { hex: '#0000FF', name: 'Bleu' },
+            { hex: '#FFFF00', name: 'Jaune' },
+            { hex: '#FF00FF', name: 'Magenta' },
+            { hex: '#00FFFF', name: 'Cyan' },
+            { hex: '#800000', name: 'Marron' },
+            { hex: '#008000', name: 'Vert foncé' },
+            { hex: '#000080', name: 'Bleu marine' },
+            { hex: '#808000', name: 'Olive' },
+            { hex: '#800080', name: 'Violet' },
+            { hex: '#008080', name: 'Turquoise' },
+            { hex: '#FFA500', name: 'Orange' },
+            { hex: '#FFC0CB', name: 'Rose' },
+            { hex: '#A52A2A', name: 'Brun' },
+            { hex: '#FFD700', name: 'Or' },
+            { hex: '#4B0082', name: 'Indigo' },
+            { hex: '#F0E68C', name: 'Kaki' },
+            { hex: '#90EE90', name: 'Vert clair' },
+            { hex: '#87CEEB', name: 'Bleu ciel' }
         ];
 
         // Motifs disponibles
@@ -330,8 +349,9 @@
                 const colorBtn = document.createElement('div');
                 colorBtn.className = 'color-btn';
                 if (index === 0) colorBtn.classList.add('active');
-                colorBtn.style.backgroundColor = color;
-                colorBtn.addEventListener('click', () => selectColor(color, colorBtn));
+                colorBtn.style.backgroundColor = color.hex;
+                colorBtn.title = color.name;
+                colorBtn.addEventListener('click', () => selectColor(color.hex, colorBtn));
                 palette.appendChild(colorBtn);
             });
             console.log('Palette de couleurs créée');
@@ -547,11 +567,13 @@
             
             if (currentTool === 'line') {
                 drawLine(startX, startY, coords.gridX, coords.gridY);
+                // drawGrid();
             } else if (currentTool === 'circle') {
                 drawCircle(startX, startY, coords.gridX, coords.gridY);
+                // drawGrid();
             }
             
-            drawGrid();
+          // 
         }
 
         // Dessiner un pixel
@@ -582,10 +604,11 @@
                         
                         if (cell.pattern[row][col] === 1) {
                             ctx.fillStyle = cell.color;
-                        } else {
+                            ctx.fillRect(subX, subY, subCellSize, subCellSize);
+                        } else if (currentTool === 'eraser'){
                             ctx.fillStyle = '#FFFFFF';
+                            ctx.fillRect(subX, subY, subCellSize, subCellSize);
                         }
-                        ctx.fillRect(subX, subY, subCellSize, subCellSize);
                     }
                 }
                 
@@ -621,7 +644,7 @@
             
             while (true) {
                 if (x >= 0 && x < gridSize && y >= 0 && y < gridSize) {
-                    if (currentTool === 'eraser') {
+                    /*if (currentTool === 'eraser') {
                         grid[y][x] = {
                             pattern: [[0,0],[0,0]],
                             color: '#FFFFFF'
@@ -631,7 +654,9 @@
                             pattern: JSON.parse(JSON.stringify(currentPattern)),
                             color: currentColor
                         };
-                    }
+                    }*/
+                   drawPixel(x, y);
+
                 }
                 
                 if (x === x1 && y === y1) break;
