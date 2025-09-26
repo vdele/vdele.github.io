@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Éditeur Pixel Art avec Motifs</title>
+    <title>PXLART</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -15,7 +15,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            /*max-width: 1200px;*/
             margin: 0 auto;
             background: white;
             border-radius: 15px;
@@ -42,8 +42,8 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            min-width: 280px;
-            max-width: 320px;
+            max-width: 100%;
+            min-width: unset;
         }
 
         .tool-section {
@@ -186,6 +186,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            width: 100%;
         }
 
         #pixelCanvas {
@@ -233,11 +234,14 @@
             border: 2px solid #e2e8f0;
             border-radius: 5px;
         }
+
+
+
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎨 Éditeur Pixel Art avec Motifs</h1>
+        <h1>🎨 PXLART</h1>
         
         <div class="editor-container">
             <div class="tools-panel">
@@ -265,7 +269,7 @@
             </div>
             
             <div class="canvas-container">
-                <canvas id="pixelCanvas" width="480" height="480"></canvas>
+                <canvas id="pixelCanvas"></canvas>
                 <div class="canvas-controls">
                     <button class="clear-btn" onclick="clearCanvas()">Effacer tout</button>
                     <div class="grid-size">
@@ -280,6 +284,10 @@
     <script>
         // Configuration
         const canvas = document.getElementById('pixelCanvas');
+
+        canvas.width = canvas.parentElement.offsetWidth;
+        canvas.height = canvas.parentElement.offsetHeight;
+
         const ctx = canvas.getContext('2d');
         let gridSize = 20;
         let cellSize = canvas.width / gridSize;
@@ -340,6 +348,7 @@
             updateCurrentColor();
             updateCurrentPattern();
             console.log('Initialisation terminée');
+            console.log("")
         }
 
         // Créer la palette de couleurs
@@ -354,7 +363,7 @@
                 colorBtn.addEventListener('click', () => selectColor(color.hex, colorBtn));
                 palette.appendChild(colorBtn);
             });
-            console.log('Palette de couleurs créée');
+            console.log('Palette de couleurs créée'); 
         }
 
         // Créer la palette de motifs
@@ -644,19 +653,7 @@
             
             while (true) {
                 if (x >= 0 && x < gridSize && y >= 0 && y < gridSize) {
-                    /*if (currentTool === 'eraser') {
-                        grid[y][x] = {
-                            pattern: [[0,0],[0,0]],
-                            color: '#FFFFFF'
-                        };
-                    } else {
-                        grid[y][x] = {
-                            pattern: JSON.parse(JSON.stringify(currentPattern)),
-                            color: currentColor
-                        };
-                    }*/
                    drawPixel(x, y);
-
                 }
                 
                 if (x === x1 && y === y1) break;
