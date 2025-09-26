@@ -62,6 +62,22 @@
             color: #2d3748;
             font-size: 1.3em;
             font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: #2d3748;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-btn:hover {
+            transform: scale(1.1);
         }
 
         .tool-buttons {
@@ -244,30 +260,6 @@
         <h1>🎨 PXLART</h1>
         
         <div class="editor-container">
-            <div class="tools-panel">
-                <div class="tool-section">
-                    <h3>🔧 Outils</h3>
-                    <div class="tool-buttons">
-                        <button class="tool-btn active" data-tool="pixel">Pixel</button>
-                        <button class="tool-btn" data-tool="line">Ligne</button>
-                        <button class="tool-btn" data-tool="circle">Cercle</button>
-                        <button class="tool-btn" data-tool="eraser">Gomme</button>
-                    </div>
-                </div>
-                
-                <div class="tool-section">
-                    <h3>🎨 Couleurs</h3>
-                    <div class="color-palette" id="colorPalette"></div>
-                    <div class="current-color" id="currentColor"></div>
-                </div>
-
-                <div class="tool-section">
-                    <h3>🔲 Motifs</h3>
-                    <div class="pattern-grid" id="patternGrid"></div>
-                    <div class="current-pattern" id="currentPattern"></div>
-                </div>
-            </div>
-            
             <div class="canvas-container">
                 <canvas id="pixelCanvas"></canvas>
                 <div class="canvas-controls">
@@ -278,6 +270,39 @@
                     </div>
                 </div>
             </div>
+            <div class="tools-panel">
+                <div class="tool-section">
+                    <h3>
+                        🔧 Outils
+                        <button class="toggle-btn" onclick="toggleSection(this)">-</button>
+                    </h3>
+                    <div class="tool-section-content">
+                        <div class="tool-buttons">
+                            <button class="tool-btn active" data-tool="pixel">Pixel</button>
+                            <button class="tool-btn" data-tool="line">Ligne</button>
+                            <button class="tool-btn" data-tool="circle">Cercle</button>
+                            <button class="tool-btn" data-tool="eraser">Gomme</button>
+                        </div>
+                </div>
+                
+                <div class="tool-section">
+                    <h3>🎨 Couleurs 
+                         <button class="toggle-btn" onclick="toggleSection(this)">-</button>
+                    </h3>
+                    <div class="color-palette" id="colorPalette"></div>
+                    <div class="current-color" id="currentColor"></div>
+                </div>
+
+                <div class="tool-section">
+                    <h3>🔲 Motifs
+                         <button class="toggle-btn" onclick="toggleSection(this)">-</button>
+                    </h3>
+                    <div class="pattern-grid" id="patternGrid"></div>
+                    <div class="current-pattern" id="currentPattern"></div>
+                </div>
+            </div>
+            
+            
         </div>
     </div>
 
@@ -711,8 +736,20 @@
             }
         }
 
+        function toggleSection(btn) {
+            const sectionContent = btn.closest('h3').nextElementSibling;
+            if (sectionContent.style.display === 'none') {
+                sectionContent.style.display = '';
+                btn.textContent = '−';
+            } else {
+                sectionContent.style.display = 'none';
+                btn.textContent = '+';
+            }
+        }
+
         // Initialisation au chargement
         window.addEventListener('load', init);
-    </script>
+
+</script>
 </body>
 </html>
